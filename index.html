@@ -1,36 +1,35 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Cntdn.js</title>
-    </head>
-    <body>
-        <h1>Cntdn.js</h1>
+<html lang="en">
 
-        <form onsubmit="ui_solve_letters(); return false">
-            <input type="text" id="letters" placeholder="Letters">
-            <button type="submit">Solve</button>
-        </form>
-        <hr>
-        <textarea rows="20" cols="50" id="letters-answer"></textarea>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Countdown Solver</title>
+<body>
+    <div>
+        <h2>Countdown Solver</h2>
+        <div>
+            <input id="seed" type="text" placeholder="Number/letter inputs here" size="50"
+            onfocusout="focusout(this)"
+            onkeydown="keydown(event, 'seed');">
+                &nbsp; <button>Go</button>
+                <button id="show-answers-button" onclick="showanswer();">Show answers</button>
+                <button id="reset-button" onclick="reset();">Reset</button>
+        </div>
+        <div id="answer"></div><br>
 
-        <hr>
-        <form onsubmit="ui_solve_numbers(); return false">
-            <input type="text" id="num1" placeholder="Number">
-            <input type="text" id="num2" placeholder="Number">
-            <input type="text" id="num3" placeholder="Number">
-            <input type="text" id="num4" placeholder="Number">
-            <input type="text" id="num5" placeholder="Number">
-            <input type="text" id="num6" placeholder="Number">
-            <input type="text" id="target" placeholder="Target">
-            <button type="submit">Solve</button>
-            <button onclick="ui_solve_trickshot(); return false">Trickshot</button>
-        </form>
-        <hr>
-        <textarea rows="20" cols="50" id="numbers-answer"></textarea>
+        <div>
+            <hr>
+            <p class="text-center">Pål Saugstad's <a href="https://github.com/pal-saugstad/cntdn/blob/master/README.md">Countdown Solver</a>
+            a fork of James Stanley's <a href="https://github.com/jes/cntdn/blob/master/README">github repository</a>.</p>
+            <hr>
+        </div>
 
-        <script src="dictionary.js"></script>
-        <script src="letters.js"></script>
-        <script src="cntdn.js"></script>
-        <script src="ui.js"></script>
+    </div>
+
+    <script src="dictionary.js"></script>
+    <script src="letters.js"></script>
+    <script src="cntdn.js"></script>
+    <script src="ui.js"></script>
     </body>
 </html>

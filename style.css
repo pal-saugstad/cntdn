@@ -1,0 +1,21 @@
+body {
+  background: #daeeff;
+  text-align: center;
+  margin-top: 20px;
+}
+
+#answer {
+  font-family: monospace;
+  white-space: pre;
+  text-align: left;
+  font-size: 1.1em;
+}
+
+#seed {
+  font-family: monospace;
+  font-size: 1.6em;
+}
+
+button {
+  margin-bottom: 10px;
+}

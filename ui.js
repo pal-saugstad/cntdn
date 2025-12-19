@@ -1,15 +1,8 @@
-function ui_solve_letters() {
-    var elem = document.getElementById('letters');
-    var top = elem.offsetTop;
-    while (elem = elem.offsetParent)
-        top += elem.offsetTop;
-    window.scrollTo(0, top);
-
-    var letters = document.getElementById('letters').value;
+function ui_solve_letters(letters) {
 
     var result = [];
 
-    solve_letters(letters.toLowerCase(), function(word, c) { result.push([word, c]); });
+    solve_letters(letters.toLowerCase(), function(word) { result.push([word]); });
 
     result.sort(function(a, b) {
         if (b[0].length != a[0].length)
@@ -17,54 +10,121 @@ function ui_solve_letters() {
         else
             return b[1] - a[1];
     });
-
-    document.getElementById('letters-answer').innerHTML = result.map(function(a) { return a[0]; }).join("\n");
+    return result.join('\n');
 }
 
-function ui_reset_letters() {
-    document.getElementById('letters').value = '';
+let inputs_arr = [];
+let inputs_str = '';
+let is_numbers = false;
 
-    ui_solve_letters();
+function focusout(e) {
+  ret_button(e.id);
 }
 
-function _ui_solve_numbers(trickshot) {
-    var numbers = [];
+function keydown(e, from) {
+  if (e.key === 'Enter') ret_button(from);
+  else if (from === 'suggest')
+    document.getElementById("check-suggestion").innerHTML = '&nbsp;';
+}
 
-    for (var i = 1; i <= 6; i++) {
-        var x = parseInt(document.getElementById('num'+i).value, 10);
-
-        if (!isNaN(x))
-            numbers.push(x);
+function ret_button(field) {
+    console.log(`You entered ${field}`);
+    if (field == 'seed') {
+        pretty_print();
     }
-
-    var target = parseInt(document.getElementById('target').value, 10);
-
-    if (isNaN(target)) {
-        document.getElementById('numbers-answer').innerHTML = 'Invalid target';
-        return;
-    }
-
-    if (numbers.length < 2) {
-        document.getElementById('numbers-answer').innerHTML = 'Not enough numbers';
-        return;
-    }
-
-    document.getElementById('numbers-answer').innerHTML = solve_numbers(numbers, target, trickshot);
 }
 
-function ui_solve_numbers() {
-    _ui_solve_numbers(false);
+function clean() {
+    document.getElementById("answer").innerHTML = '';
+    document.getElementById("seed").value = '';
+    document.getElementById("suggest").value = '';
+    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
 }
 
-function ui_solve_trickshot() {
-    _ui_solve_numbers(true);
+function reset() {
+    clean();
+    inputs_str = '';
+    inputs_arr = [];
 }
 
-function ui_reset_numbers() {
-    for (var i = 1; i <= 6; i++) {
-        document.getElementById('num'+i).value = '';
+window.onload = (event) => {
+  reset();
+};
+
+function pretty_print(answer_text = '') {
+    document.getElementById("answer").innerHTML = answer_text; 
+    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
+    let raw_num = [];
+    let inputs = [];
+    let istring = document.getElementById("seed").value.toLowerCase().trim();
+    let numbs = false;
+    let letts = false;
+    let letts_str = '';
+    for (i=0; i < istring.length; i++) {
+      let char = istring.charAt(i);
+      if (!isNaN(char) && char != ' ') {
+        numbs = true;
+      } else if (/^[a-z]$/i.test(char)) {
+        letts = true;
+        letts_str += char;
+      }
     }
-    document.getElementById('target').value = '';
+    if (letts == numbs) {
+        if (numbs)
+          document.getElementById("answer").innerHTML= "Wrong input format - '" + istring + "'" +
+            "\nEither use numbers or letters, not both, please";
+        return !numbs;
+    }
+    is_numbers = numbs;
+    if (is_numbers) {
+      raw_num = istring.trim().split(' ');
+      inputs = [];
+      var bad_input = false;
+ 
+      for (let val of raw_num) {
+        if (isNaN(val) || val.length == 0) continue;
+        inputs.push(parseInt(val));
+        if (val < 1) bad_input = true;
+        if (inputs.length >= 7) break; 
+      }
+      if (inputs.length < 2) bad_input = true;
+      console.log(inputs);
 
-    ui_solve_numbers();
+      if (bad_input) {
+        document.getElementById("answer").innerHTML = "Wrong input format - '" + istring + "'" +
+                         "\nFormat: 2 to 7 positive numbers where the latter is the target" +
+                         "\nExample: '25 75 7 11 13 3 563'";
+        return false;
+      }
+    } else {
+      inputs_str = letts_str.substring(0, 9);
+      console.log(`Letters! ${inputs_str}`)
+    }
+  if (is_numbers) {
+    number_str = '      ';
+    for (let i = 0; i < inputs.length - 1; i++)
+        number_str += `${inputs[i].toString().padStart(4)}`;
+    number_str += `        | ${inputs[inputs.length - 1]} |`;
+    document.getElementById("seed").value = number_str; 
+  } else {
+    inputs = inputs_str.toUpperCase().split('');
+    document.getElementById("seed").value = '           ' + inputs.join('  ');
+  }
+  inputs_arr = inputs;
+  return true;
+}
+
+function showcore() {
+    let res;
+    if (is_numbers) {
+        let target = inputs_arr.pop();
+        res = solve_numbers(inputs_arr, target);
+    } else {
+        res = ui_solve_letters(inputs_str);
+    }
+    document.getElementById("answer").innerHTML = res;
+}
+
+function showanswer() {
+  if (pretty_print("Calculating ...")) setTimeout(showcore, 0);
 }
