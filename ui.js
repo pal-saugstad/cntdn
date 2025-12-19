@@ -1,4 +1,5 @@
 var timeout;
+let _gaq = [];
 
 function ui_solve_letters() {
     var elem = document.getElementById('letters');
