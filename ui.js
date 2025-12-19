@@ -23,8 +23,6 @@ function focusout(e) {
 
 function keydown(e, from) {
   if (e.key === 'Enter') ret_button(from);
-  else if (from === 'suggest')
-    document.getElementById("check-suggestion").innerHTML = '&nbsp;';
 }
 
 function ret_button(field) {
@@ -37,8 +35,6 @@ function ret_button(field) {
 function clean() {
     document.getElementById("answer").innerHTML = '';
     document.getElementById("seed").value = '';
-    document.getElementById("suggest").value = '';
-    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
 }
 
 function reset() {
@@ -53,7 +49,6 @@ window.onload = (event) => {
 
 function pretty_print(answer_text = '') {
     document.getElementById("answer").innerHTML = answer_text; 
-    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
     let raw_num = [];
     let inputs = [];
     let istring = document.getElementById("seed").value.toLowerCase().trim();
@@ -72,7 +67,7 @@ function pretty_print(answer_text = '') {
     if (letts == numbs) {
         if (numbs)
           document.getElementById("answer").innerHTML= "Wrong input format - '" + istring + "'" +
-            "\nEither use numbers or letters, not both, please";
+            "\nUse numbers OR letters please, not both at the same time";
         return !numbs;
     }
     is_numbers = numbs;
