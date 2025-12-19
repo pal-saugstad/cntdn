@@ -70,3 +70,56 @@ function word_in_dictionary(word) {
         return false;
     return true;
 }
+
+function solve_letters_matrix(letters) {
+
+  let result = [];
+  let res = [];
+  const noof = letters.length;
+  solve_letters(letters.toLowerCase(), function(word) { result.push(word); });
+
+  result.sort();
+
+  let out_matrix = [[],[],[],[],[],[],[],[],[],[]];
+  let no_of_words = [0,0,0,0,0 ,0,0,0,0,0];
+  let max_word_length = 0;
+  for (value of result) {
+    no_of_words[value.length] += 1;
+    out_matrix[value.length].push(value);
+  }
+  for (i = 9; i > 0; i--) {
+    if (no_of_words[i] > 0) {
+      max_word_length = i;
+      break;
+    }
+  }
+
+  const spaces = '                                                                 ';
+
+  const letters_warn = noof != 9 ? ` from the ${noof} letters input`: '';
+  let stats_best = `Found ${result.length} words of which ${no_of_words[max_word_length]}`
+        + ` words have ${max_word_length} letters${letters_warn}\n\n`;
+  delim = '';
+  for (let i=0; i<noof;) {
+    i++;
+    stats_best += `${delim}${i}`;
+    if (delim == '') delim += '  ';
+    if (i & 1) delim += '  ';
+  }
+  res.push(stats_best);
+  let row = 'init';
+  for (i = 0; row.length > 0; i++) {
+    row = '';
+    let blanks = 0;
+    for (j = 1; j <= 9; j++) {
+      if (out_matrix[j].length > i) {
+        row += spaces.substring(0,blanks) + out_matrix[j][i];
+        blanks = 3;
+      } else {
+        blanks += j + 3;
+      }
+    }
+    res.push(row);
+  }
+  return res.join('\n');
+}

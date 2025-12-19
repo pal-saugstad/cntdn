@@ -1,18 +1,3 @@
-function ui_solve_letters(letters) {
-
-    var result = [];
-
-    solve_letters(letters.toLowerCase(), function(word) { result.push([word]); });
-
-    result.sort(function(a, b) {
-        if (b[0].length != a[0].length)
-            return b[0].length - a[0].length;
-        else
-            return b[1] - a[1];
-    });
-    return result.join('\n');
-}
-
 let inputs_arr = [];
 let inputs_str = '';
 let is_numbers = false;
@@ -100,7 +85,7 @@ function pretty_print(answer_text = '') {
     for (let i = 0; i < inputs.length - 1; i++)
         number_str += `${inputs[i].toString().padStart(4)}`;
     number_str += `        | ${inputs[inputs.length - 1]} |`;
-    document.getElementById("seed").value = number_str; 
+    document.getElementById("seed").value = number_str;
   } else {
     inputs = inputs_str.toUpperCase().split('');
     document.getElementById("seed").value = '           ' + inputs.join('  ');
@@ -115,7 +100,7 @@ function showcore() {
         let target = inputs_arr.pop();
         res = solve_numbers(inputs_arr, target);
     } else {
-        res = ui_solve_letters(inputs_str);
+        res = solve_letters_matrix(inputs_str);
     }
     document.getElementById("answer").innerHTML = res;
 }
