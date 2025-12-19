@@ -212,3 +212,17 @@ function solve_numbers(numbers, target, trickshot) {
 
     return stringify_result(serialise_result(tidyup_result(_solve_numbers(numbers, target, trickshot))), target);
 }
+
+if (typeof process !== 'undefined') {
+    let input=[];
+    for (n in process.argv) input[n] = parseInt(process.argv[n]);
+    input.shift();
+    input.shift();
+    while (input.length > 7) input.shift();
+    if (n < 3) console.log("Give me numbers");
+    else {
+        let target = input.pop();
+        console.log(`Input: ${input.join(', ')} - Target: ${target}`);
+        console.log(solve_numbers(input, target));
+    }
+}
