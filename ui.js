@@ -1,6 +1,3 @@
-var timeout;
-let _gaq = [];
-
 function ui_solve_letters() {
     var elem = document.getElementById('letters');
     var top = elem.offsetTop;
@@ -9,14 +6,6 @@ function ui_solve_letters() {
     window.scrollTo(0, top);
 
     var letters = document.getElementById('letters').value;
-
-    clearTimeout(timeout);
-    if (letters.length > 5) {
-        /* wait 5 seconds, and if no more letters come post the event */
-        timeout = setTimeout(function() {
-            _gaq.push(['_trackEvent', 'solve', 'letters', letters.toLowerCase()]);
-        }, 5000);
-    }
 
     var result = [];
 
@@ -49,9 +38,6 @@ function _ui_solve_numbers(trickshot) {
     }
 
     var target = parseInt(document.getElementById('target').value, 10);
-
-    if (numbers.length == 6)
-        _gaq.push(['_trackEvent', 'solve', trickshot ? 'trickshot' : 'numbers', numbers.join(',')+','+target]);
 
     if (isNaN(target)) {
         document.getElementById('numbers-answer').innerHTML = 'Invalid target';
