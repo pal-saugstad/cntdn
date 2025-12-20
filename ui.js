@@ -1,3 +1,20 @@
+function shuffle(a) {
+    var n = a.length;
+
+    for(var i = n - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var tmp = a[i];
+        a[i] = a[j];
+        a[j] = tmp;
+    }
+}
+
+function str_shuffle(s) {
+    var a = s.split("");
+    shuffle(a);
+    return a.join("");
+}
+
 let inputs_arr = [];
 let inputs_str = '';
 let is_numbers = false;
@@ -8,18 +25,56 @@ function focusout(e) {
 
 function keydown(e, from) {
   if (e.key === 'Enter') ret_button(from);
+  else if (from === 'suggest')
+    document.getElementById("check-suggestion").innerHTML = '&nbsp;';
 }
 
 function ret_button(field) {
     console.log(`You entered ${field}`);
     if (field == 'seed') {
         pretty_print();
+    } else if (field == 'suggest') {
+        checksolution();
     }
+}
+
+function gennumbers(large) {
+    clean();
+    is_numbers = true;
+
+    var largenums = [25, 50, 75, 100];
+    var smallnums = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10];
+
+    shuffle(largenums);
+    shuffle(smallnums);
+
+    let number_str = '';
+
+    for (let i = 0; i < 6; i++)
+        number_str += ` ${i < large ? largenums[i] : smallnums[i-large]}`;
+
+    number_str += ` ${Math.floor(Math.random() * (899)) + 101}`;
+    document.getElementById("seed").value = number_str;
+    pretty_print();
+}
+
+function addletter(vowels) {
+    clean();
+    console.log(vowels);
+    const basevowels = "AAAAAAAAAAAAAAAEEEEEEEEEEEEEEEEEEEEEIIIIIIIIIIIIIOOOOOOOOOOOOOUUUUU";
+    const basecons = "BBCCCDDDDDDFFGGGHHJKLLLLLMMMMNNNNNNNNPPPPQRRRRRRRRRSSSSSSSSSTTTTTTTTTVWXYZ";
+    reset();
+    is_numbers = false;
+    let letters = str_shuffle(str_shuffle(basevowels).substring(0, vowels) + str_shuffle(basecons).substring(vowels, 9));
+    document.getElementById("seed").value = letters;
+    pretty_print();
 }
 
 function clean() {
     document.getElementById("answer").innerHTML = '';
     document.getElementById("seed").value = '';
+    document.getElementById("suggest").value = '';
+    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
 }
 
 function reset() {
@@ -34,6 +89,7 @@ window.onload = (event) => {
 
 function pretty_print(answer_text = '') {
     document.getElementById("answer").innerHTML = answer_text; 
+    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
     let raw_num = [];
     let inputs = [];
     let istring = document.getElementById("seed").value.toLowerCase().trim();
@@ -107,4 +163,24 @@ function showcore() {
 
 function showanswer() {
   if (pretty_print("Calculating ...")) setTimeout(showcore, 0);
+}
+
+function checksolution() {
+    const input_line = document.getElementById("suggest").value;
+    if (input_line == '') return;
+    let errors = '';
+    if (is_numbers) {
+      document.getElementById("check-suggestion").innerHTML = 'Not implemented yet for numbers';
+    } else {
+      if (!sufficient_letters(input_line.toLowerCase(), inputs_str.toLowerCase()))
+          errors += "Wrong letters. "; /* TODO: be more specific */
+      if (!word_in_dictionary(input_line.toLowerCase()))
+          errors += "Word not in dictionary.";
+
+      if (errors.length > 0) {
+        document.getElementById("check-suggestion").innerHTML = errors;
+      } else {
+        document.getElementById("check-suggestion").innerHTML = 'Nice word!';
+      }
+    }
 }

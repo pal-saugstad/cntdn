@@ -16,6 +16,28 @@
                 <button id="show-answers-button" onclick="showanswer();">Show answers</button>
                 <button id="reset-button" onclick="reset();">Reset</button>
         </div>
+        <div>
+            Letters: <span title="Vowels"> 
+            <button onclick="addletter(3);">3</button>
+            <button onclick="addletter(4);">4</button>
+            <button onclick="addletter(5);">5</button>
+            </span>
+            &nbsp; Numbers:
+            <button onclick="gennumbers(0);" title="Six small">0</button>
+            <span title="Big">
+            <button onclick="gennumbers(1);">1</button>
+            <button onclick="gennumbers(2);">2</button>
+            <button onclick="gennumbers(3);">3</button>
+            <button onclick="gennumbers(4);">4</button>
+            </span>
+        </div>
+        <div>
+            <input id="suggest" type="text" placeholder="Try"
+            onfocusout="javascript:focusout(this);"
+            onkeydown="keydown(event, 'suggest');">
+            <button>Check</button>
+        </div>
+        <div id="check-suggestion"></div>
         <div id="answer"></div><br>
 
         <div>
@@ -30,6 +52,6 @@
     <script src="dictionary.js"></script>
     <script src="letters.js?v=0"></script>
     <script src="cntdn.js"></script>
-    <script src="ui.js?v=0"></script>
+    <script src="ui.js?v=1"></script>
     </body>
 </html>
