@@ -153,8 +153,9 @@ function pretty_print(answer_text = '') {
 function showcore() {
     let res;
     if (is_numbers) {
-        let target = inputs_arr.pop();
-        res = solve_numbers(inputs_arr, target);
+        let inputs = inputs_arr.slice();
+        let target = inputs.pop();
+        res = solve_numbers(inputs, target);
     } else {
         res = solve_letters_matrix(inputs_str);
     }
@@ -170,7 +171,24 @@ function checksolution() {
     if (input_line == '') return;
     let errors = '';
     if (is_numbers) {
-      document.getElementById("check-suggestion").innerHTML = 'Not implemented yet for numbers';
+      let inputs = inputs_arr.slice();
+      let target = parseInt(inputs.pop());
+      console.log(`INPUTS ${inputs} target ${target}`);
+      answer_from_calc = calculate_formula(inputs, input_line);
+      if (isNaN(answer_from_calc)) {
+        document.getElementById("check-suggestion").innerHTML =
+            answer_from_calc;
+      } else {
+        diff = target - answer_from_calc;
+        if (diff) {
+          if (diff < 0) diff = -diff;
+          document.getElementById("check-suggestion").innerHTML = 
+             answer_from_calc + ' is ' + diff + ' off from target';
+        } else {
+          document.getElementById("check-suggestion").innerHTML = 
+              answer_from_calc + ' is correct, well done!';
+        }
+      }
     } else {
       if (!sufficient_letters(input_line.toLowerCase(), inputs_str.toLowerCase()))
           errors += "Wrong letters. "; /* TODO: be more specific */
