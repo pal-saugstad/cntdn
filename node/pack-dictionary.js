@@ -2,8 +2,11 @@ const fs = require('fs');
 const readline = require('readline');
 let di = {};
 
+const me = process.argv[1];
+const path = me.substring(0, me.lastIndexOf('/'));
+
 const readlines_from_file = readline.createInterface({
-  input: fs.createReadStream('dictionary'),
+  input: fs.createReadStream(path + '/dictionary'),
   crlfDelay: Infinity,
 });
 

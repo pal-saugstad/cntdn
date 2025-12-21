@@ -7,6 +7,7 @@ if (typeof process !== 'undefined') {
   const context = { console: { log: (...args) => { console.log(...args); } }, input_args: process.argv };
   vm.createContext(context);
   const me = process.argv[1];
+  process.chdir(me.substring(0, me.lastIndexOf('/')));
   const code =
     fs.readFileSync('../dictionary.js', 'utf-8') +
     fs.readFileSync(me,                 'utf-8');
