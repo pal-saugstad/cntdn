@@ -59,7 +59,7 @@ function _calc(vals, show_partial) {
       if (use) big_return += nice_print;
     }
   }
-  return "Couldn't interpret that";
+  return "Couldn't calculate that";
 }
 
 /**
@@ -73,22 +73,16 @@ function _calc(vals, show_partial) {
 function calculate_formula(inputs, formula='') {
 
   let input = inputs.map(function(x) { return [parseInt(x)] });
-  formula += ' ';
-  var in_number = false;
-  var number = 0;
   var arrayed = [];
   while (formula.length) {
-    letter = formula.substring(0,1);
-    formula = formula.substring(1);
-    if (letter >= '0' && letter <= '9') {
-      number = number * 10 + parseInt(letter);
-      in_number = true;
+    value = formula.match(/^[\d|\.]+/);
+    if (value !== null) {
+      let num = value[0];
+      arrayed.push(num * 1);
+      formula = formula.substring(num.length);
     } else {
-      if (in_number) {
-        arrayed.push(number);
-        in_number = false;
-        number = 0;
-      }
+      let letter = formula.substring(0,1);
+      formula = formula.substring(1);
       switch(letter) {
         case '(':
         case ')':
@@ -96,7 +90,7 @@ function calculate_formula(inputs, formula='') {
         case '-':
         case '*':
         case '/':
-          arrayed.push(letter);
+            arrayed.push(letter);
           break;
         case ' ':
           break;
