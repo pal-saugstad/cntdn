@@ -73,9 +73,6 @@ function _calc(vals, show_partial) {
 function calculate_formula(inputs, formula='') {
 
   let input = inputs.map(function(x) { return [parseInt(x)] });
-  input.sort(function(a,b) {
-    return a[0] > b[0];
-  });
   formula += ' ';
   var in_number = false;
   var number = 0;
@@ -246,8 +243,8 @@ function tidyup_result(result_in) {
         }
       }
     }
-    children[0].sort(function(a,b) { return (b[0] << 3) + b.length > (a[0] << 3) + a.length; });
-    children[1].sort(function(a,b) { return (b[0] << 3) + b.length > (a[0] << 3) + a.length; });
+    children[0].sort(function(a,b) { return (b[0] << 3) + b.length - (a[0] << 3) - a.length; });
+    children[1].sort(function(a,b) { return (b[0] << 3) + b.length - (a[0] << 3) - a.length; });
     result = result.concat(children[0]);
     result[2] = result.length;
     result = result.concat(children[1]);
@@ -298,9 +295,6 @@ var spaces = '                                                ';
 function solve_numbers(inputs, target) {
 
     let numbers = inputs.map(function(x) { return [parseInt(x)] });
-    numbers.sort(function(a,b) {
-      return a[0] > b[0];
-    });
 
     abs_diff = Math.abs(numbers[0] - target) + 1;
 
