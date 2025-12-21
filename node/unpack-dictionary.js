@@ -1,21 +1,10 @@
-if (typeof process !== 'undefined') {
-
-  // set up and run vm with the required files
-  const vm = require('vm');
   const fs = require('fs');
 
-  const context = { console: { log: (...args) => { console.log(...args); } }, input_args: process.argv };
-  vm.createContext(context);
   const me = process.argv[1];
-  process.chdir(me.substring(0, me.lastIndexOf('/')));
-  const code =
-    fs.readFileSync('../dictionary.js', 'utf-8') +
-    fs.readFileSync(me,                 'utf-8');
-  vm.runInContext(code, context);
+  const path = me.substring(0, me.lastIndexOf('/'));
 
-} else {
+  eval(fs.readFileSync(path + '/../dictionary.js', 'utf-8'));
 
-  // code to run in vm as the last "included" file (see readFileSync above)
   function* give_all_words() {
     function* _give(node, answer) {
       for (c in node) {
@@ -28,9 +17,8 @@ if (typeof process !== 'undefined') {
 
   const w = give_all_words();
   const first = w.next().value;
-  let nw = ''
+  let nw = '';
   while (nw != first) {
-     nw = w.next().value
-     console.log(nw);
+      nw = w.next().value;
+      console.log(nw);
   }
-}
