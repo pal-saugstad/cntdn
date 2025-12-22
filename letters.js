@@ -36,23 +36,21 @@ function solve_letters(letters, cb) {
 }
 
 function sufficient_letters(word, letters) {
-    var count = {};
+    let count = {};
+    let notfound = '';
+    let toomany = '';
+    let notused = letters.slice().toLowerCase();
 
-    for (var i = 0; i < letters.length; i++) {
-        if (!count[letters.charAt(i)])
-            count[letters.charAt(i)] = 0;
-        count[letters.charAt(i)]++;
+    for (let c of word.toLowerCase()) {
+      if (notused.match(c) !== null) {
+        notused = notused.replace(c,'');
+      } else {
+        if (letters.match(c) !== null) toomany += c;
+        else notfound += c;
+      }
     }
-
-    for (var i = 0; i < word.length; i++) {
-        if (!count[word.charAt(i)])
-            return false;
-        count[word.charAt(i)]--;
-        if (count[word.charAt(i)] < 0)
-            return false;
-    }
-
-    return true;
+    notfound += toomany;
+    return [notfound.length == 0, notfound, notused];
 }
 
 function word_in_dictionary(word) {

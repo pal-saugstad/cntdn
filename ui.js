@@ -61,7 +61,7 @@ function gennumbers(large) {
 function addletter(vowels) {
     clean();
     console.log(vowels);
-    const basevowels = "AAAAAAAAAAAAAAAEEEEEEEEEEEEEEEEEEEEEIIIIIIIIIIIIIOOOOOOOOOOOOOUUUUU";
+    const basevowels = "AAAAAAEEEEEEEEIIIIIOOOOOUUU";
     const basecons = "BBCCCDDDDDDFFGGGHHJKLLLLLMMMMNNNNNNNNPPPPQRRRRRRRRRSSSSSSSSSTTTTTTTTTVWXYZ";
     reset();
     is_numbers = false;
@@ -190,15 +190,14 @@ function checksolution() {
         }
       }
     } else {
-      if (!sufficient_letters(input_line.toLowerCase(), inputs_str.toLowerCase()))
-          errors += "Wrong letters. "; /* TODO: be more specific */
-      if (!word_in_dictionary(input_line.toLowerCase()))
-          errors += "Word not in dictionary.";
-
-      if (errors.length > 0) {
-        document.getElementById("check-suggestion").innerHTML = errors;
-      } else {
-        document.getElementById("check-suggestion").innerHTML = 'Nice word!';
-      }
+      let clean_input = input_line.toLowerCase().replace(/ /g,'');
+      let txt = word_in_dictionary(clean_input)
+        ? "" : "Word not in dictionary.";
+      let [is_ok, notfound, notused] = sufficient_letters(clean_input, inputs_str.toLowerCase());
+      if (!is_ok)
+          txt = `Letters not in input: '${notfound}'. ${txt}`; /* TODO: be more specific */
+      if (!txt.length) txt = 
+         "Nice word" + (notused.length > 0 ? `, but try squeeze in some of these: '${notused}'` : "! You used all the letters!");
+      document.getElementById("check-suggestion").innerHTML = txt;
     }
 }
