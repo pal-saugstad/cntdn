@@ -18,6 +18,7 @@ function str_shuffle(s) {
 let inputs_arr = [];
 let inputs_str = '';
 let is_numbers = false;
+let is_letters = false;
 
 function focusout(e) {
   ret_button(e.id);
@@ -39,8 +40,7 @@ function ret_button(field) {
 }
 
 function gennumbers(large) {
-    clean();
-    is_numbers = true;
+    reset();
 
     var largenums = [25, 50, 75, 100];
     var smallnums = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10];
@@ -59,37 +59,30 @@ function gennumbers(large) {
 }
 
 function addletter(vowels) {
-    clean();
+    reset();
     console.log(vowels);
     const basevowels = "AAAAAAEEEEEEEEIIIIIOOOOOUUU";
     const basecons = "BBCCCDDDDDDFFGGGHHJKLLLLLMMMMNNNNNNNNPPPPQRRRRRRRRRSSSSSSSSSTTTTTTTTTVWXYZ";
-    reset();
-    is_numbers = false;
     let letters = str_shuffle(str_shuffle(basevowels).substring(0, vowels) + str_shuffle(basecons).substring(vowels, 9));
     document.getElementById("seed").value = letters;
     pretty_print();
 }
 
-function clean() {
+function reset() {
     document.getElementById("answer").innerHTML = '';
     document.getElementById("seed").value = '';
     document.getElementById("suggest").value = '';
     document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
-}
-
-function reset() {
-    clean();
     inputs_str = '';
     inputs_arr = [];
+    is_letters = is_numbers = false;
 }
 
 window.onload = (event) => {
   reset();
 };
 
-function pretty_print(answer_text = '') {
-    document.getElementById("answer").innerHTML = answer_text; 
-    document.getElementById("check-suggestion").innerHTML = '&nbsp;'; 
+function pretty_print() {
     let raw_num = [];
     let inputs = [];
     let istring = document.getElementById("seed").value.toLowerCase().trim();
@@ -109,9 +102,12 @@ function pretty_print(answer_text = '') {
         if (numbs)
           document.getElementById("answer").innerHTML= "Wrong input format - '" + istring + "'" +
             "\nUse numbers OR letters please, not both at the same time";
-        return !numbs;
+        is_letters = is_numbers = false;
+        return;
     }
+    reset();
     is_numbers = numbs;
+    is_letters = letts;
     if (is_numbers) {
       raw_num = istring.trim().split(' ');
       inputs = [];
@@ -130,24 +126,22 @@ function pretty_print(answer_text = '') {
         document.getElementById("answer").innerHTML = "Wrong input format - '" + istring + "'" +
                          "\nFormat: 2 to 7 positive numbers where the latter is the target" +
                          "\nExample: '25 75 7 11 13 3 563'";
-        return false;
+        is_letters = is_numbers = false;
+        return;
       }
-    } else {
-      inputs_str = letts_str.substring(0, 9);
-      console.log(`Letters! ${inputs_str}`)
-    }
-  if (is_numbers) {
     number_str = '      ';
     for (let i = 0; i < inputs.length - 1; i++)
         number_str += `${inputs[i].toString().padStart(4)}`;
     number_str += `        | ${inputs[inputs.length - 1]} |`;
     document.getElementById("seed").value = number_str;
   } else {
+      inputs_str = letts_str.substring(0, 9);
+      console.log(`Letters! ${inputs_str}`)
     inputs = inputs_str.toUpperCase().split('');
     document.getElementById("seed").value = '           ' + inputs.join('  ');
   }
   inputs_arr = inputs;
-  return true;
+  return;
 }
 
 function showcore() {
@@ -163,41 +157,44 @@ function showcore() {
 }
 
 function showanswer() {
-  if (pretty_print("Calculating ...")) setTimeout(showcore, 0);
+  if (is_numbers || is_letters) {
+    document.getElementById("answer").innerHTML = "Calculating ...";
+    setTimeout(showcore, 0);
+  }
 }
 
 function checksolution() {
-    const input_line = document.getElementById("suggest").value;
+    const input_line = document.getElementById("suggest").value.trim();
     if (input_line == '') return;
-    let errors = '';
-    if (is_numbers) {
+    const has_letters = input_line.match(/[a-z]/i) !== null;
+    const has_numbers = input_line.match(/[0-9]/) !== null;
+    if (has_numbers == has_letters) {
+      document.getElementById("check-suggestion").innerHTML = "What is this?";
+    } else if (has_numbers) {
       let inputs = inputs_arr.slice();
       let target = parseInt(inputs.pop());
       console.log(`INPUTS ${inputs} target ${target}`);
-      answer_from_calc = calculate_formula(inputs, input_line);
-      if (isNaN(answer_from_calc)) {
-        document.getElementById("check-suggestion").innerHTML =
-            answer_from_calc;
-      } else {
-        diff = target - answer_from_calc;
-        if (diff) {
-          if (diff < 0) diff = -diff;
-          document.getElementById("check-suggestion").innerHTML = 
-             answer_from_calc + ' is ' + diff + ' off from target';
-        } else {
-          document.getElementById("check-suggestion").innerHTML = 
-              answer_from_calc + ' is correct, well done!';
+      let answer_from_calc = calculate_formula(is_numbers ? inputs : [], input_line);
+      if (is_numbers) {
+        if (!isNaN(answer_from_calc)) {
+          diff = Math.abs(target - answer_from_calc);
+          answer_from_calc += diff ?
+             ' is ' + diff + ' off from target' : ' is correct, well done!';
         }
       }
+      document.getElementById("check-suggestion").innerHTML = answer_from_calc +
+      (is_letters ? " <b>- Try solve the letters puzzle!</b>" : "");
     } else {
       let clean_input = input_line.toLowerCase().replace(/ /g,'');
       let txt = word_in_dictionary(clean_input)
         ? "" : "Word not in dictionary.";
       let [is_ok, notfound, notused] = sufficient_letters(clean_input, inputs_str.toLowerCase());
-      if (!is_ok)
+      if (is_letters && !is_ok)
           txt = `Letters not in input: '${notfound}'. ${txt}`; /* TODO: be more specific */
-      if (!txt.length) txt = 
-         "Nice word" + (notused.length > 0 ? `, but try squeeze in some of these: '${notused}'` : "! You used all the letters!");
-      document.getElementById("check-suggestion").innerHTML = txt;
+      if (!txt.length) txt = is_letters
+         ? "Nice word" + (notused.length > 0 ? `, but try squeeze in some of these: '${notused}'` : "! You used all the letters!")
+         : "Nice, the word is in the dictionary";
+      document.getElementById("check-suggestion").innerHTML = txt + 
+      (is_numbers ? " <b>- Try solve the numbers puzzle!</b>" : "");
     }
 }
