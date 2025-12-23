@@ -19,6 +19,10 @@ let inputs_arr = [];
 let inputs_str = '';
 let is_numbers = false;
 let is_letters = false;
+let is_conudrum = false;
+let conundrum_len = 0;
+let conundrum_result = [];
+let conundrum_clue = '';
 
 function focusout(e) {
   ret_button(e.id);
@@ -33,6 +37,7 @@ function keydown(e, from) {
 function ret_button(field) {
     console.log(`You entered ${field}`);
     if (field == 'seed') {
+        reset_conundrum();
         pretty_print();
     } else if (field == 'suggest') {
         checksolution();
@@ -40,7 +45,6 @@ function ret_button(field) {
 }
 
 function gennumbers(large) {
-    reset();
 
     var largenums = [25, 50, 75, 100];
     var smallnums = [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10];
@@ -50,6 +54,7 @@ function gennumbers(large) {
 
     let number_str = '';
 
+    reset_conundrum();
     for (let i = 0; i < 6; i++)
         number_str += ` ${i < large ? largenums[i] : smallnums[i-large]}`;
 
@@ -59,7 +64,7 @@ function gennumbers(large) {
 }
 
 function addletter(vowels) {
-    reset();
+    reset_conundrum();
     console.log(vowels);
     const basevowels = "AAAAAAEEEEEEEEIIIIIOOOOOUUU";
     const basecons = "BBCCCDDDDDDFFGGGHHJKLLLLLMMMMNNNNNNNNPPPPQRRRRRRRRRSSSSSSSSSTTTTTTTTTVWXYZ";
@@ -68,7 +73,37 @@ function addletter(vowels) {
     pretty_print();
 }
 
-function reset() {
+function conundrum(len) {
+    is_conundrum = true;
+    conundrum_len = len;
+    document.getElementById("conundrum-clue").disabled = false;
+    document.getElementById("show-answers-button").innerHTML = 'Conundrum list';
+    document.getElementById("show-answers-button").setAttribute('title', `${conundrum_len} letter Conundrums: Show list of 40 puzzles`);
+    conundrum_result  = generate_conundrum(len);
+    conundrum_clue = [];
+    document.getElementById("seed").value = conundrum_result[0];
+    pretty_print();
+}
+
+function show_conundrum_clue() {
+    reveal_idx = conundrum_clue.length;
+    if (reveal_idx < conundrum_len) {
+        conundrum_clue += conundrum_result[1].charAt(reveal_idx);
+    }
+    document.getElementById("suggest").value = conundrum_clue;
+}
+
+function reset_conundrum() {
+    document.getElementById("conundrum-clue").disabled = true;
+    is_conundrum = false;
+    document.getElementById("show-answers-button").innerHTML = 'Show answers';
+    document.getElementById("show-answers-button").setAttribute('title', "");
+}
+document.getElementById("seed").onfocus=function() {
+  reset_conundrum();
+};
+
+function reset(keep_conundrum) {
     document.getElementById("answer").innerHTML = '';
     document.getElementById("seed").value = '';
     document.getElementById("suggest").value = '';
@@ -76,6 +111,9 @@ function reset() {
     inputs_str = '';
     inputs_arr = [];
     is_letters = is_numbers = false;
+    if (keep_conundrum) return;
+    document.getElementById("conundrum-clue").disabled = true;
+    reset_conundrum();
 }
 
 window.onload = (event) => {
@@ -103,9 +141,10 @@ function pretty_print() {
           document.getElementById("answer").innerHTML= "Wrong input format - '" + istring + "'" +
             "\nUse numbers OR letters please, not both at the same time";
         is_letters = is_numbers = false;
+        reset_conundrum();
         return;
     }
-    reset();
+    reset(true);
     is_numbers = numbs;
     is_letters = letts;
     if (is_numbers) {
@@ -127,6 +166,7 @@ function pretty_print() {
                          "\nFormat: 2 to 7 positive numbers where the latter is the target" +
                          "\nExample: '25 75 7 11 13 3 563'";
         is_letters = is_numbers = false;
+        reset_conundrum();
         return;
       }
     number_str = '      ';
@@ -145,11 +185,20 @@ function pretty_print() {
 }
 
 function showcore() {
-    let res;
+    let res = '';
     if (is_numbers) {
         let inputs = inputs_arr.slice();
         let target = inputs.pop();
         res = solve_numbers(inputs, target);
+    } else if (is_conundrum) {
+        for (let i = 0; i < 40; i++) {
+          res += `${conundrum_result[0]} -> ${conundrum_result[1]} | ${conundrum_result[2]}\n`;
+          conundrum(conundrum_len);
+        }
+        res += `
+- puzzle -> answer   | level
+  - where higher level indicates lower similarities between puzzle and answer
+`;
     } else {
         res = solve_letters_matrix(inputs_str);
     }
@@ -183,7 +232,8 @@ function checksolution() {
         }
       }
       document.getElementById("check-suggestion").innerHTML = answer_from_calc +
-      (is_letters ? " <b>- Try solve the letters puzzle!</b>" : "");
+      (is_letters ? (is_conundrum ? " <b>- Try solve the conundrum!</b>" :
+          " <b>- Try solve the letters puzzle!</b>") : "");
     } else {
       let clean_input = input_line.toLowerCase().replace(/ /g,'');
       let txt = word_in_dictionary(clean_input)
