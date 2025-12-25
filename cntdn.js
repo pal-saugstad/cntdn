@@ -101,6 +101,7 @@ function calculate_formula(inputs, formula='') {
   }
   if (input.length > 0) {
     var my_inputs = input.slice();
+    let used = {};
     for (val of arrayed) {
       var found = false;
       if (isNaN(val)) continue;
@@ -108,11 +109,13 @@ function calculate_formula(inputs, formula='') {
         if (my_inputs[i] == val) {
           found = true;
           my_inputs[i] = '.';
+          used[val] = 1;
           break;
         }
       }
       if (!found) {
-        return "Undefined input value in use: '" + val + "'";
+        if (val in used) return `Number is used too many times: ${val}`;
+        else return `Number not in input: ${val}`;
       }
     }
   }
@@ -330,10 +333,10 @@ function solve_numbers(inputs, target) {
     var ret_val = '';
     if (abs_diff) {
       let offby = no_of_same_res < 2 ? ' which is' : 's which are';
-      ret_val = `NO results. Found ${no_of_same_res} equation${offby} Off by ${abs_diff}\n`;
+      ret_val = `NO results. Found ${no_of_same_res} equation${offby} off by ${abs_diff}\n`;
     } else {
       let plural = no_of_same_res < 2 ? '' : 's';
-      ret_val = `Found ${no_of_same_res} equation${plural}. The best result is using ${no_of_num} input values\n`;
+      ret_val = `Found ${no_of_same_res} equation${plural}\n`;
     }
     ret_val +=  '\n' + s.join("\n");
     return ret_val;

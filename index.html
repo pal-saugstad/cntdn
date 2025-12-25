@@ -9,7 +9,7 @@
     <div>
         <h2>Countdown Solver</h2>
         <div>
-            <input id="seed" type="text" placeholder="Number/letter inputs here" size="50"
+            <input id="seed" type="text" placeholder="Numbers/letters puzzle input" size="50"
             onfocusout="focusout(this)"
             onkeydown="keydown(event, 'seed');">
                 &nbsp; <button>Go</button>
@@ -17,22 +17,28 @@
                 <button id="reset-button" onclick="reset();">Reset</button>
         </div>
         <div>
-            Letters: <span title="Vowels"> 
-            <button onclick="addletter(3);">3</button>
-            <button onclick="addletter(4);">4</button>
-            <button onclick="addletter(5);">5</button>
-            </span>
-            &nbsp; Numbers:
+            Numbers:
             <button onclick="gennumbers(0);" title="Six small">0</button>
             <span title="Big">
             <button onclick="gennumbers(1);">1</button>
             <button onclick="gennumbers(2);">2</button>
             <button onclick="gennumbers(3);">3</button>
             <button onclick="gennumbers(4);">4</button>
+            </span> &nbsp;
+            Letters: <span title="Vowels"> 
+            <button onclick="addletter(3);">3</button>
+            <button onclick="addletter(4);">4</button>
+            <button onclick="addletter(5);">5</button>
+            </span> &nbsp;
+            Conundrums: <span title="Conundrum">
+            <button onclick="conundrum(7);">7</button>
+            <button onclick="conundrum(8);">8</button>
+            <button onclick="conundrum(9);">9</button>
+            <button id="conundrum-clue"  onclick="show_conundrum_clue();" disabled>&lt; Clue</button>
             </span>
         </div>
         <div>
-            <input id="suggest" type="text" placeholder="Try"
+            <input id="suggest" type="text" placeholder="Try solve the puzzle"
             onfocusout="javascript:focusout(this);"
             onkeydown="keydown(event, 'suggest');">
             <button>Check</button>
@@ -49,9 +55,11 @@
 
     </div>
 
-    <script src="dictionary.js"></script>
-    <script src="letters.js?v=1"></script>
-    <script src="cntdn.js?v=2"></script>
-    <script src="ui.js?v=3"></script>
+    <script src="dictionary.js?v=0"></script>
+    <script src="dictionary-stats.js"></script>
+    <script src="letters.js?v=2"></script>
+    <script src="cntdn.js?v=3"></script>
+    <script src="conundrum.js"></script>
+    <script src="ui.js?v=4"></script>
     </body>
 </html>

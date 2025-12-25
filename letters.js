@@ -95,8 +95,7 @@ function solve_letters_matrix(letters) {
   const spaces = '                                                                 ';
 
   const letters_warn = noof != 9 ? ` from the ${noof} letters input`: '';
-  let stats_best = `Found ${result.length} words of which ${no_of_words[max_word_length]}`
-        + ` words have ${max_word_length} letters${letters_warn}\n\n`;
+  let stats_best = `Found ${result.length} words${letters_warn}\n\n`;
   delim = '';
   for (let i=0; i<noof;) {
     i++;
