@@ -34,6 +34,10 @@ function keydown(e, from) {
     document.getElementById("check-suggestion").innerHTML = '&nbsp;';
 }
 
+document.getElementById("seed").onfocus=function() {
+  reset_conundrum();
+};
+
 function ret_button(field) {
     console.log(`You entered ${field}`);
     if (field == 'seed') {
@@ -99,9 +103,6 @@ function reset_conundrum() {
     document.getElementById("show-answers-button").innerHTML = 'Show answers';
     document.getElementById("show-answers-button").setAttribute('title', "");
 }
-document.getElementById("seed").onfocus=function() {
-  reset_conundrum();
-};
 
 function reset(keep_conundrum) {
     document.getElementById("answer").innerHTML = '';
@@ -231,9 +232,7 @@ function checksolution() {
              ' is ' + diff + ' off from target' : ' is correct, well done!';
         }
       }
-      document.getElementById("check-suggestion").innerHTML = answer_from_calc +
-      (is_letters ? (is_conundrum ? " <b>- Try solve the conundrum!</b>" :
-          " <b>- Try solve the letters puzzle!</b>") : "");
+      document.getElementById("check-suggestion").innerHTML = answer_from_calc;
     } else {
       let clean_input = input_line.toLowerCase().replace(/ /g,'');
       let txt = word_in_dictionary(clean_input)
@@ -244,7 +243,6 @@ function checksolution() {
       if (!txt.length) txt = is_letters
          ? "Nice word" + (notused.length > 0 ? `, but try squeeze in some of these: '${notused}'` : "! You used all the letters!")
          : "Nice, the word is in the dictionary";
-      document.getElementById("check-suggestion").innerHTML = txt + 
-      (is_numbers ? " <b>- Try solve the numbers puzzle!</b>" : "");
+      document.getElementById("check-suggestion").innerHTML = txt;
     }
 }
