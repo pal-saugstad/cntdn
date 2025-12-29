@@ -193,11 +193,12 @@ function showcore() {
         res = solve_numbers(inputs, target);
     } else if (is_conundrum) {
         for (let i = 0; i < 40; i++) {
-          res += `${conundrum_result[0]} -> ${conundrum_result[1]} | ${conundrum_result[2]}\n`;
+          alt_text = conundrum_result[3].length ? ` ${conundrum_result[3].join(', ')}` : "";
+          res += `${conundrum_result[0]} -> ${conundrum_result[1]} | ${conundrum_result[2]} |${alt_text}\n`;
           conundrum(conundrum_len);
         }
         res += `
-- puzzle -> answer   | level
+- puzzle -> answer   | level | (Alternative answers)
   - where higher level indicates lower similarities between puzzle and answer
 `;
     } else {

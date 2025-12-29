@@ -42,12 +42,11 @@ function generate_conundrum(len9 = 9) {
     const letters = random_word(len9);
     const five = [];
 
-    let nines = 0;
+    let nines = [];
     solve_letters(letters, function(word) {
       if (word.length == len5) five.splice((five.length+1) * Math.random() | 0, 0, word);
-      else if (word.length == len9) nines++;
+      else if (word.length == len9 && word != letters) nines.push(word);
     });
-    if (nines > 1) continue;
 //    console.log("---------- " + letters + " --------------------");
     for (const five_word of five) {
       let four_sorted = letters;
@@ -61,13 +60,13 @@ function generate_conundrum(len9 = 9) {
         const score2 = levenshtein(five_word + four_word, letters) + Math.random();
 //        console.log('scores:', four_word + five_word, score1, five_word + four_word, score2);
         if (score1 > len4 && score2 > len4) {
-          if (score1 > score2) return [four_word + five_word, letters, score1 | 0];
-          return [five_word + four_word, letters, score2 | 0];
+          if (score1 > score2) return [four_word + five_word, letters, score1 | 0, nines];
+          return [five_word + four_word, letters, score2 | 0, nines];
         }
       }
     }
   }
-  return ["undefined", "undefined", 0];
+  return ["undefined", "undefined", 0, []];
 }
 
 /*
