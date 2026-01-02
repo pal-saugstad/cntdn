@@ -1,8 +1,0 @@
-This is a javascript solver for the letters and numbers games.
-
-I have modified the original version made by 'jes'.
-
-- The 'letters' part of cntdn.js is split out into letters.js
-- An alternative ui.js and index.html
-
-Online version available at http://saugstad.net/countdown
