@@ -54,4 +54,11 @@ In some cases, more than one word can be a correct answer to the puzzle.
 If so, both (all) are shown when pressing the 'Show answers' button.
 In addition, a list of 40 puzzles can be generated.
 
+## Online version 
+
 Online version available at https://saugstad.net/countdown
+
+## Original repository
+
+This repository is forked from https://github.com/jes/cntdn
+
