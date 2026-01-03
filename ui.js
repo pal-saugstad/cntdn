@@ -247,9 +247,11 @@ function checksolution() {
       let clean_input = input_line.toLowerCase().replace(/ /g,'');
       let txt = word_in_dictionary(clean_input)
         ? "" : "Word not in dictionary.";
-      let [is_ok, notfound, notused] = sufficient_letters(clean_input, inputs_str.toLowerCase());
-      if (is_letters && !is_ok)
-          txt = `Letters not in input: '${notfound}'. ${txt}`; /* TODO: be more specific */
+      let [is_ok, toomany, notfound, notused] = sufficient_letters(clean_input, inputs_str.toLowerCase());
+      if (is_letters && !is_ok) {
+        if (notfound.length) txt = `Letters not in input: '${notfound}'. ${txt}`;
+        if (toomany.length) txt = `Letters used too many times: '${toomany}'. ${txt}`;
+      }
       if (!txt.length) txt = is_letters
          ? "Nice word" + (notused.length > 0 ? `, but try squeeze in some of these: '${notused}'` : "! You used all the letters!")
          : "Nice, the word is in the dictionary";

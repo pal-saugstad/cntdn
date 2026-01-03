@@ -39,7 +39,7 @@ function sufficient_letters(word, letters) {
     let count = {};
     let notfound = '';
     let toomany = '';
-    let notused = letters.slice().toLowerCase();
+    let notused = letters.slice();
 
     for (let c of word.toLowerCase()) {
       if (notused.match(c) !== null) {
@@ -49,8 +49,7 @@ function sufficient_letters(word, letters) {
         else notfound += c;
       }
     }
-    notfound += toomany;
-    return [notfound.length == 0, notfound, notused];
+    return [(notfound + toomany).length == 0, toomany, notfound, notused];
 }
 
 function word_in_dictionary(word) {
